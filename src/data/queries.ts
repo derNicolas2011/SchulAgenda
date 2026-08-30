@@ -37,7 +37,7 @@ export function useProfile() {
   return useQuery({
     queryKey: queryKeys.profile(userId),
     queryFn: async (): Promise<Profile | null> => {
-      const { data, error } = await supabase.from('profiles').select('*').maybeSingle()
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle()
       if (error) throw error
       return data ? toProfile(data) : null
     },
@@ -64,6 +64,7 @@ export function useUpdateProfile() {
           ...(patch.timezone ? { timezone: patch.timezone } : {}),
           ...(patch.defaultReminders ? { default_reminders: patch.defaultReminders } : {}),
         })
+        .eq('id', userId)
         .select()
         .single()
       if (error) throw error
