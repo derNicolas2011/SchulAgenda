@@ -59,7 +59,7 @@ export function SettingsPage() {
       >
         <div className="flex flex-col gap-4">
           {KIND_ORDER.map((kind) => {
-            const current = profile?.defaultReminders?.[kind] ?? DEFAULT_REMINDERS[kind]
+            const current = profile?.defaultReminders ? profile.defaultReminders[kind] : DEFAULT_REMINDERS[kind]
             return (
               <div key={kind}>
                 <p className="mb-1.5 text-meta font-medium text-muted">{KIND_META[kind].label}</p>
