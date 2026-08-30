@@ -1,14 +1,12 @@
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from './database.types'
 
-const url = import.meta.env.VITE_SUPABASE_URL
-const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+const url = import.meta.env.VITE_SUPABASE_URL || 'https://uyqobcyzajztfprwpoim.supabase.co'
+const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5cW9iY3l6YWp6dGZwcndwb2ltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwODczMjcsImV4cCI6MjEwMzY2MzMyN30._f003q7xngNMokphHfJbrhNkCuUdzJHHkMcKQzUtURA'
 
 export const isSupabaseConfigured = Boolean(url && anonKey)
 
-/** Der Anon-Key ist öffentlich und unkritisch – die Autorität liegt
- *  ausschliesslich bei den RLS-Policies in der Datenbank. */
-export const supabase = createClient<Database>(url ?? 'http://localhost:54321', anonKey ?? 'missing', {
+export const supabase = createClient<Database>(url, anonKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
@@ -17,8 +15,6 @@ export const supabase = createClient<Database>(url ?? 'http://localhost:54321', 
   },
 })
 
-// Nur in der Entwicklung: erlaubt E2E-Tests, eine Session zu setzen, ohne
-// den Magic-Link-Versand nachzustellen. Im Produktionsbundle nicht enthalten.
 if (import.meta.env.DEV) {
   ;(window as unknown as { __supabase?: typeof supabase }).__supabase = supabase
 }
