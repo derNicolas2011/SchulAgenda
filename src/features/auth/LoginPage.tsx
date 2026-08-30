@@ -72,6 +72,29 @@ export function LoginPage() {
             <Button type="submit" variant="primary" block disabled={status === 'sending'} className="h-12 md:h-12">
               {status === 'sending' ? 'Wird gesendet…' : 'Anmeldelink senden'}
             </Button>
+            
+            {/* DEMO-BUTTON HINZUGEFÜGT FÜR VERCEL TEST */}
+            <Button 
+              type="button" 
+              variant="secondary" 
+              block 
+              disabled={status === 'sending'} 
+              className="h-12 md:h-12 border-accent text-accent"
+              onClick={async () => {
+                setStatus('sending');
+                const { error } = await supabase.auth.signInWithPassword({
+                  email: 'test@agenda.ch',
+                  password: 'agenda-test'
+                });
+                if (error) {
+                  setStatus('error');
+                  setMessage(error.message);
+                }
+              }}
+            >
+              Demo-Login verwenden
+            </Button>
+
             {status === 'error' && <p className="text-body text-danger">{message}</p>}
             <p className="text-meta text-muted">
               Kein Passwort nötig. Der Link meldet dich direkt an und bleibt danach angemeldet.
