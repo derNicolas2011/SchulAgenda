@@ -1,9 +1,7 @@
-import { Check, Copy, RefreshCw } from 'lucide-react'
-import { useState } from 'react'
 import { useAgenda } from '@/app/useAgenda'
 import { useAuth } from '@/app/auth'
 import { applyTheme, storeTheme } from '@/app/theme'
-import { useIcsToken, useUpdateProfile } from '@/data/queries'
+import { useUpdateProfile } from '@/data/queries'
 import { supabase } from '@/lib/supabase'
 import {
   DEFAULT_REMINDERS,
@@ -16,19 +14,13 @@ import {
 import { Chip } from '@/ui/Chip'
 import { Button } from '@/ui/Button'
 import { Segmented } from '@/ui/Segmented'
-import { useToast } from '@/ui/Toast'
-import { icsFeedUrl } from '@/features/settings/icsUrl'
 
 export function SettingsPage() {
   const { profile } = useAgenda()
   const { session } = useAuth()
   const updateProfile = useUpdateProfile()
-  const { rotate, revoke } = useIcsToken()
-  const toast = useToast()
-  const [copied, setCopied] = useState(false)
 
   const theme: ThemePreference = profile?.theme ?? 'system'
-  const feedUrl = profile?.icsToken ? icsFeedUrl(profile.icsToken) : null
 
   function changeTheme(next: ThemePreference) {
     // Sofort anwenden, damit sich der Wechsel nicht nach Netzwerk anfühlt.
@@ -40,17 +32,6 @@ export function SettingsPage() {
   function setDefaultReminder(kind: EntryKind, minutes: number | null) {
     const next = { ...DEFAULT_REMINDERS, ...profile?.defaultReminders, [kind]: minutes }
     updateProfile.mutate({ defaultReminders: next })
-  }
-
-  async function copyFeed() {
-    if (!feedUrl) return
-    try {
-      await navigator.clipboard.writeText(feedUrl)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {
-      toast.show('Kopieren nicht möglich – Adresse manuell markieren')
-    }
   }
 
   return (
@@ -70,56 +51,6 @@ export function SettingsPage() {
             { value: 'dark', label: 'Dunkel' },
           ]}
         />
-      </Group>
-
-      <Group
-        title="Kalender-Abo"
-        hint="Deine Einträge erscheinen im iPhone-Kalender – inklusive Erinnerungen. Wer die Adresse hat, sieht deine Einträge; du kannst sie jederzeit ersetzen."
-      >
-        {feedUrl ? (
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2 rounded-[var(--radius-chip)] border border-border bg-sunken px-3 py-2">
-              <code className="min-w-0 flex-1 truncate text-meta text-muted">{feedUrl}</code>
-              <button
-                type="button"
-                onClick={copyFeed}
-                aria-label="Adresse kopieren"
-                className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-muted hover:bg-elevated hover:text-text"
-              >
-                {copied ? <Check size={17} strokeWidth={2} className="text-success" /> : <Copy size={17} strokeWidth={1.75} />}
-              </button>
-            </div>
-            <p className="text-meta text-muted">
-              iPhone: Einstellungen → Apps → Kalender → Accounts → Account hinzufügen → Andere →
-              Kalenderabo hinzufügen. Der Kalender aktualisiert sich etwa stündlich – „Heute" in der
-              App bleibt die verbindliche Quelle.
-            </p>
-            <div className="flex gap-2">
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  rotate.mutate(undefined, { onSuccess: () => toast.show('Neue Adresse erzeugt') })
-                }}
-              >
-                <RefreshCw size={16} strokeWidth={1.75} />
-                Adresse ersetzen
-              </Button>
-              <Button
-                variant="plain"
-                onClick={() => revoke.mutate(undefined, { onSuccess: () => toast.show('Abo deaktiviert') })}
-              >
-                Deaktivieren
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <Button
-            variant="primary"
-            onClick={() => rotate.mutate(undefined, { onSuccess: () => toast.show('Kalender-Abo aktiviert') })}
-          >
-            Kalender-Abo aktivieren
-          </Button>
-        )}
       </Group>
 
       <Group
