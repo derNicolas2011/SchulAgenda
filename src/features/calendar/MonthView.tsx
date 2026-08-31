@@ -57,16 +57,14 @@ export function MonthView({ anchor, today, selected, byDate, onSelect, onOpenEnt
                 isWeekend(date) && 'bg-sunken',
                 !inMonth && 'opacity-35',
                 isSelected && 'bg-elevated',
-                hasTest && !isSelected && 'bg-[var(--surface)]'
+                hasTest && !isSelected && 'ring-2 ring-yellow-400 bg-yellow-400/15 shadow-[0_0_12px_rgba(250,204,21,0.5)] z-10'
               )}
             >
               <span
                 className={cn(
                   'grid h-6 w-6 place-items-center rounded-full text-meta tabular',
-                  isToday ? 'bg-accent font-bold text-accent-contrast' : 
-                  hasTest ? 'font-bold text-white shadow-sm' : 'font-medium',
+                  isToday ? 'bg-accent font-bold text-accent-contrast' : 'font-medium',
                 )}
-                style={!isToday && hasTest ? { backgroundColor: subjectColor(testEntry.subject) } : undefined}
               >
                 {dayNumber(date)}
               </span>
