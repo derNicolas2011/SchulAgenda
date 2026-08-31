@@ -21,6 +21,8 @@ export function EntryRow({ entry, today, onOpen, hideUrgency, compact }: Props) 
   const color = subjectColor(entry.subject)
   const urgency = hideUrgency ? null : urgencyLabel(entry, today)
 
+  const isTest = entry.kind === 'test'
+
   return (
     <div
       role="button"
@@ -34,10 +36,11 @@ export function EntryRow({ entry, today, onOpen, hideUrgency, compact }: Props) 
       }}
       className={cn(
         'group flex w-full items-center gap-1 rounded-[var(--radius-card)] text-left transition-colors',
-        'hover:bg-elevated',
+        isTest ? 'hover:brightness-95' : 'hover:bg-elevated',
         compact ? 'min-h-11 py-1' : 'min-h-[60px] py-1.5 md:min-h-[52px]',
         done && 'opacity-45',
       )}
+      style={isTest ? { backgroundColor: `color-mix(in srgb, ${color} 10%, transparent)` } : undefined}
     >
       {isCompletable(entry) ? (
         <Checkbox

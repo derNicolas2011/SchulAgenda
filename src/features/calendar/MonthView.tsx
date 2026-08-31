@@ -41,6 +41,9 @@ export function MonthView({ anchor, today, selected, byDate, onSelect, onOpenEnt
           const inMonth = isSameMonth(date, anchor)
           const isToday = date === today
           const isSelected = date === selected
+          
+          const testEntry = entries.find(e => e.kind === 'test')
+          const hasTest = !!testEntry
 
           return (
             <button
@@ -54,13 +57,16 @@ export function MonthView({ anchor, today, selected, byDate, onSelect, onOpenEnt
                 isWeekend(date) && 'bg-sunken',
                 !inMonth && 'opacity-35',
                 isSelected && 'bg-elevated',
+                hasTest && !isSelected && 'bg-[var(--surface)]'
               )}
             >
               <span
                 className={cn(
                   'grid h-6 w-6 place-items-center rounded-full text-meta tabular',
-                  isToday ? 'bg-accent font-bold text-accent-contrast' : 'font-medium',
+                  isToday ? 'bg-accent font-bold text-accent-contrast' : 
+                  hasTest ? 'font-bold text-white shadow-sm' : 'font-medium',
                 )}
+                style={!isToday && hasTest ? { backgroundColor: subjectColor(testEntry.subject) } : undefined}
               >
                 {dayNumber(date)}
               </span>
