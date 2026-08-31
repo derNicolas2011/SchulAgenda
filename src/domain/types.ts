@@ -103,29 +103,23 @@ export const REMINDER_NONE = null
 /** Erinnerungsoptionen je Typ. "1 Woche vorher" bei einer Hausaufgabe für
  *  morgen ist sinnlos – deshalb kontextabhängige Auswahl statt einer
  *  globalen Liste. Werte in Minuten vor dem Fälligkeitstag. */
+const EXTENDED_OPTIONS: { label: string; minutes: number | null }[] = [
+  { label: 'Keine', minutes: null },
+  { label: '1 Stunde vorher', minutes: 60 },
+  { label: '2 Stunden vorher', minutes: 120 },
+  { label: 'Am Vorabend', minutes: 840 },
+  { label: '1 Tag vorher', minutes: 1440 },
+  { label: '2 Tage vorher', minutes: 2880 },
+  { label: '3 Tage vorher', minutes: 4320 },
+  { label: '1 Woche vorher', minutes: 10080 },
+  { label: '2 Wochen vorher', minutes: 20160 },
+]
+
 export const REMINDER_OPTIONS: Record<EntryKind, { label: string; minutes: number | null }[]> = {
-  test: [
-    { label: 'Keine', minutes: null },
-    { label: '1 Tag vorher', minutes: 1440 },
-    { label: '2 Tage vorher', minutes: 2880 },
-    { label: '1 Woche vorher', minutes: 10080 },
-  ],
-  assignment: [
-    { label: 'Keine', minutes: null },
-    { label: 'Am Vorabend', minutes: 840 },
-    { label: '1 Tag vorher', minutes: 1440 },
-    { label: '2 Tage vorher', minutes: 2880 },
-  ],
-  homework: [
-    { label: 'Keine', minutes: null },
-    { label: 'Am Vorabend', minutes: 840 },
-    { label: '1 Tag vorher', minutes: 1440 },
-  ],
-  other: [
-    { label: 'Keine', minutes: null },
-    { label: 'Am Vorabend', minutes: 840 },
-    { label: '1 Tag vorher', minutes: 1440 },
-  ],
+  test: EXTENDED_OPTIONS,
+  assignment: EXTENDED_OPTIONS,
+  homework: EXTENDED_OPTIONS,
+  other: EXTENDED_OPTIONS,
 }
 
 export const DEFAULT_REMINDERS: Record<EntryKind, number | null> = {
