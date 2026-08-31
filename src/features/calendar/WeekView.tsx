@@ -81,29 +81,36 @@ export function WeekView({ anchor, today, byDate, onOpenEntry, onAddOnDay }: Pro
               </div>
 
               <div className="flex flex-col gap-1">
-                {entries.map((entry) => (
-                  <button
-                    key={entry.id}
-                    type="button"
-                    onClick={() => onOpenEntry(entry.id)}
-                    className={cn(
-                      'w-full rounded-[8px] border-l-[3px] bg-surface px-2 py-1.5 text-left transition-colors hover:bg-elevated',
-                      isDone(entry) && 'opacity-45',
-                    )}
-                    style={{ borderLeftColor: subjectColor(entry.subject) }}
-                  >
-                    <span
-                      className="block truncate text-[11px] font-medium"
-                      style={{ color: subjectColor(entry.subject) }}
+                {entries.map((entry) => {
+                  const isTest = entry.kind === 'test'
+                  return (
+                    <button
+                      key={entry.id}
+                      type="button"
+                      onClick={() => onOpenEntry(entry.id)}
+                      className={cn(
+                        'w-full rounded-[8px] border-l-[3px] px-2 py-1.5 text-left transition-colors hover:bg-elevated',
+                        isDone(entry) && 'opacity-45',
+                        !isTest && 'bg-surface'
+                      )}
+                      style={{ 
+                        borderLeftColor: subjectColor(entry.subject),
+                        ...(isTest ? { backgroundColor: `color-mix(in srgb, ${subjectColor(entry.subject)} 15%, transparent)` } : {})
+                      }}
                     >
-                      {entry.subject?.shortName ?? '—'}
-                      {entry.dueTime && <span className="ml-1 text-faint tabular">{entry.dueTime}</span>}
-                    </span>
-                    <span className={cn('block truncate text-meta', isDone(entry) && 'line-through')}>
-                      {entry.title}
-                    </span>
-                  </button>
-                ))}
+                      <span
+                        className={cn("block truncate text-[11px]", isTest ? "font-bold" : "font-medium")}
+                        style={{ color: subjectColor(entry.subject) }}
+                      >
+                        {entry.subject?.shortName ?? '—'}
+                        {entry.dueTime && <span className="ml-1 text-faint tabular">{entry.dueTime}</span>}
+                      </span>
+                      <span className={cn('block truncate text-meta', isDone(entry) && 'line-through', isTest && 'font-semibold')}>
+                        {entry.title}
+                      </span>
+                    </button>
+                  )
+                })}
               </div>
 
               <button

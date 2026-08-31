@@ -1,12 +1,13 @@
-import { Bell, CalendarDays, Clock, FileText, Pencil } from 'lucide-react'
+import { Bell, CalendarDays, Clock, FileText, Pencil, Trash } from 'lucide-react'
 import { formatDayLong, formatTime } from '@/domain/date'
 import { isCompletable, isDone } from '@/domain/entry'
 import { KIND_META, REMINDER_OPTIONS, type EntryWithSubject } from '@/domain/types'
-import { useToggleEntry } from '@/data/queries'
+import { useDeleteEntry, useToggleEntry, useCreateEntry } from '@/data/queries'
 import { Button } from '@/ui/Button'
 import { ColorDot } from '@/ui/Chip'
 import { Sheet } from '@/ui/Sheet'
 import { subjectColor } from '@/ui/subjectColor'
+import { useToast } from '@/ui/Toast'
 
 interface Props {
   entry: EntryWithSubject | null
@@ -16,6 +17,9 @@ interface Props {
 
 export function EntryDetail({ entry, onClose, onEdit }: Props) {
   const toggle = useToggleEntry()
+  const remove = useDeleteEntry()
+  const createEntry = useCreateEntry()
+  const toast = useToast()
   if (!entry) return null
 
   const color = subjectColor(entry.subject)
@@ -45,6 +49,31 @@ export function EntryDetail({ entry, onClose, onEdit }: Props) {
           <Button variant={isCompletable(entry) ? 'secondary' : 'primary'} block onClick={() => onEdit(entry.id)}>
             <Pencil size={16} strokeWidth={1.75} />
             Bearbeiten
+          </Button>
+          <Button 
+            variant="secondary" 
+            onClick={() => {
+              remove.mutate(entry.id)
+              onClose()
+              toast.show('Gelöscht', {
+                label: 'Rückgängig',
+                onAction: () => {
+                  createEntry.mutate({
+                    kind: entry.kind,
+                    subjectId: entry.subjectId,
+                    title: entry.title,
+                    dueDate: entry.dueDate,
+                    dueTime: entry.dueTime,
+                    reminderMinutes: entry.reminderMinutes,
+                    notes: entry.notes,
+                  })
+                },
+              })
+            }}
+            aria-label="Löschen"
+            className="px-3"
+          >
+            <Trash size={16} strokeWidth={1.75} className="text-danger" />
           </Button>
         </div>
       }

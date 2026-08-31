@@ -66,13 +66,19 @@ export function MonthView({ anchor, today, selected, byDate, onSelect, onOpenEnt
               </span>
 
               <span className="flex h-2 items-center gap-[3px]">
-                {entries.slice(0, MAX_DOTS).map((entry) => (
-                  <span
-                    key={entry.id}
-                    className={cn('h-[5px] w-[5px] rounded-full', isDone(entry) && 'opacity-40')}
-                    style={{ background: subjectColor(entry.subject) }}
-                  />
-                ))}
+                {entries.slice(0, MAX_DOTS).map((entry) => {
+                  const isTest = entry.kind === 'test'
+                  return (
+                    <span
+                      key={entry.id}
+                      className={cn(
+                        isTest ? 'h-[7px] w-[7px] rounded-[2px]' : 'h-[5px] w-[5px] rounded-full',
+                        isDone(entry) && 'opacity-40'
+                      )}
+                      style={{ background: subjectColor(entry.subject) }}
+                    />
+                  )
+                })}
                 {entries.length > MAX_DOTS && (
                   <span className="text-[9px] leading-none font-semibold text-muted">
                     +{entries.length - MAX_DOTS}
